@@ -3,11 +3,11 @@ const swaggerUi = require("swagger-ui-express");
 const YAML = require("yaml");
 const fs = require("fs");
 const User = require("./user.routes");
+const Dashboard = require("./dashboard.routes");
 const file = fs.readFileSync("docs/swagger.yaml", "utf8");
 
-router.use("/activation-email-success", (req, res) => {
-  res.render("activation-email-success");
-});
+// dashboard
+router.use("/", Dashboard);
 
 // api docs
 const swaggerDocument = YAML.parse(file);

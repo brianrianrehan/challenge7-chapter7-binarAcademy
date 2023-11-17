@@ -54,6 +54,8 @@ module.exports = {
       const html = await nodemailer.getHtml("activation-email.ejs", { email, token });
       nodemailer.sendEmail(email, "Email Activation", html);
 
+      // res.redirect("/login");
+
       res.status(201).json({
         status: true,
         message: "User registration has been successful",
@@ -123,6 +125,75 @@ module.exports = {
         status: true,
         message: "OK",
         data: { user, token },
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  forgotPasswordUser: async (req, res, next) => {
+    try {
+      let { email } = req.body;
+
+      const user = await prisma.user.findUnique({
+        where: { email },
+      });
+
+      if (!user) {
+        return res.status(404).json({
+          status: false,
+          message: "Email not found",
+          data: null,
+        });
+      }
+
+      let token = jwt.sign({ email: user.email }, JWT_SECRET_KEY);
+      const html = await nodemailer.getHtml("email-password-reset.ejs", { email, token });
+      nodemailer.sendEmail(email, "Reset Password", html);
+
+      res.redirect("http://localhost:3000/forgot-password");
+
+      // res.status(200).json({
+      //   status: true,
+      //   message: "success",
+      //   data: { user, token },
+      // });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  updatePasswordUser: async (req, res, next) => {
+    try {
+      let { token } = req.query;
+      let { password, password_confirmation } = req.body;
+
+      if (password != password_confirmation) {
+        return res.status(400).json({
+          status: false,
+          message: "please ensure that the password and password confirmation match!",
+          data: null,
+        });
+      }
+
+      let encryptedPassword = await bcrypt.hash(password, 10);
+
+      jwt.verify(token, JWT_SECRET_KEY, async (err, decoded) => {
+        if (err) {
+          return res.status(400).json({
+            status: false,
+            message: "Bad request",
+            err: err.message,
+            data: null,
+          });
+        }
+
+        let updated = await prisma.user.update({
+          where: { email: decoded.email },
+          data: { password: encryptedPassword },
+        });
+
+        res.redirect("/login");
       });
     } catch (err) {
       next(err);
