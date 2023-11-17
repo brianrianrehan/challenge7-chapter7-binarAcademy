@@ -1,0 +1,532 @@
+openapi: 3.0.3
+info:
+  title: challenge-06
+  description: |-
+    aplikasi ini untuk merepresentasikaninformasi pengguna, profil pengguna, dan postingan. Pengguna memiliki profil yang mencakup nama, tanggal lahir, dan gambar profil. Aplikasi ini dapat membuat banyak postingan yang terhubung ke profil pengguna.
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000/api/v1
+tags:
+  - name: Users
+    description: Operations related to users
+  - name: Posts
+    description: Operations related to accounts
+paths:
+  /users/register:
+    post:
+      tags:
+        - Users
+      operationId: post-register-user
+      summary: Register user
+      description: Register user with the provided information.
+      requestBody:
+        $ref: "#/components/requestBodies/Register"
+      responses:
+        "201":
+          description: User registration was successful
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          newUser:
+                            $ref: "#/components/schemas/UserModel"
+                          newUserProfile:
+                            type: object
+                            properties:
+                              first_name:
+                                type: string
+                                example: "arfin"
+                              last_name:
+                                type: string
+                                example: "123"
+        "400":
+          description: Email already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "failed"
+  /users/login:
+    post:
+      tags:
+        - Users
+      operationId: post-login-user
+      summary: Login user
+      description: Login user with the provided information.
+      requestBody:
+        $ref: "#/components/requestBodies/Login"
+      responses:
+        "201":
+          description: User Login was successful
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          user:
+                            $ref: "#/components/schemas/UserModel"
+                          token:
+                            type: string
+                            example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjk4Njk0MzI1fQ.mexfgD-aW24iYvoWYWQJWSv7AbJ5EqyIDrHS6iCk-d0"
+        "400":
+          description: invalid email or password!
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "failed"
+  /users/authenticate:
+    get:
+      tags:
+        - Users
+      operationId: get-user-by-authenticate
+      summary: Get user by authenticate
+      description: Get user by authenticate
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          first_name:
+                            type: string
+                            example: "arfin"
+                          last_name:
+                            type: string
+                            example: "123"
+                          email:
+                            type: string
+                            example: "arfin@mail.com"
+                          birth_date:
+                            type: string
+                            example: "01-01-2023"
+                          profile_picture:
+                            type: string
+                            example: "https://ik.imagekit.io/arfin07/1628693262177_a8Y3AhxNv.png"
+  /users/updateProfile:
+    put:
+      tags:
+        - Users
+      operationId: put-edit-user-by-id
+      summary: Put Edit User By Id
+      description: Put Edir User By Id
+      security:
+        - bearerAuth: []
+      requestBody:
+        $ref: "#/components/requestBodies/UpdateProfile"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          newUserProfile:
+                            $ref: "#/components/schemas/UserProfileModel"
+        "400":
+          description: Only PNG JPEG allowed to upload!
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "failed"
+  /posts:
+    post:
+      tags:
+        - Posts
+      operationId: post-create-post
+      summary: Post Create Post
+      description: Post Create Post
+      security:
+        - bearerAuth: []
+      requestBody:
+        $ref: "#/components/requestBodies/CreatePost"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          newPost:
+                            $ref: "#/components/schemas/PostModel"
+        "400":
+          description: Only PNG JPEG allowed to upload!
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "failed"
+    get:
+      tags:
+        - Posts
+      operationId: get-all-post-user-by-authenticate
+      summary: Get all post user by authenticate
+      description: Get all post user by authenticate
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          posts:
+                            type: array
+                            items:
+                              allOf:
+                                - $ref: "#/components/schemas/PostModel"
+        "404":
+          description: Post not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "failed"
+  /posts/{postId}:
+    get:
+      tags:
+        - Posts
+      operationId: get-detail-post-user-by-id
+      summary: Get detail post user by id
+      description: Get detail post user by id
+      parameters:
+        - in: path
+          name: postId
+          schema:
+            type: integer
+          required: true
+          description: The ID of the post to retrieve.
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          post:
+                            $ref: "#/components/schemas/PostModel"
+        "404":
+          description: Post not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "failed"
+    delete:
+      tags:
+        - Posts
+      operationId: delete-post-user-by-id
+      summary: Delete post user by id
+      description: Delete post user by id
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: postId
+          schema:
+            type: integer
+          required: true
+          description: The ID of the post to retrieve.
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+        "404":
+          description: Post not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "failed"
+    put:
+      tags:
+        - Posts
+      operationId: put-edit-post-user-by-id
+      summary: Put edit post user by id
+      description: Put Edit post user by id
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: postId
+          schema:
+            type: integer
+          required: true
+          description: The ID of the post to retrieve.
+      requestBody:
+        $ref: "#/components/requestBodies/UpdatePostUser"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          newPost:
+                            $ref: "#/components/schemas/PostModel"
+        "404":
+          description: Post not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "failed"
+components:
+  schemas:
+    BasicResponse:
+      title: BasicResponse
+      type: object
+      properties:
+        status:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: "success"
+    UserModel:
+      title: User
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        email:
+          type: string
+          example: "arfin@mail.com"
+        password:
+          type: string
+          example: "$2b$10$wpqr1W8aUNCN7BZZ3o6sz.meX9rB/aItp5Mw/0q7GaRmJbsU2GGbK"
+    UserProfileModel:
+      title: User Profile
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        first_name:
+          type: string
+          example: "arfin"
+        last_name:
+          type: string
+          example: "123"
+        birth_date:
+          type: string
+          example: "01-01-2023"
+        profile_picture:
+          type: string
+          example: "https://ik.imagekit.io/arfin07/1628693262177_a8Y3AhxNv.png"
+        userId:
+          type: integer
+          example: 1
+    PostModel:
+      title: User Profile
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: "ini title"
+        description:
+          type: string
+          example: "ini description"
+        image:
+          type: string
+          example: "https://ik.imagekit.io/arfin07/1628693262177_a8Y3AhxNv.png"
+        imageId:
+          type: string
+          example: "653f1df188c257da33f8a9e7"
+        userId:
+          type: integer
+          example: 1
+  requestBodies:
+    Register:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              first_name:
+                type: string
+                example: "arfin"
+              last_name:
+                type: string
+                example: "123"
+              email:
+                type: string
+                example: "arfin@mail.com"
+              password:
+                type: string
+                example: "123456"
+              password_confirmation:
+                type: string
+                example: "123456"
+    Login:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+                example: "arfin@mail.com"
+              password:
+                type: string
+                example: "123456"
+    UpdateProfile:
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            properties:
+              first_name:
+                type: string
+                example: "arfin"
+              last_name:
+                type: string
+                example: "123"
+              birth_date:
+                type: string
+                example: "01-01-2023"
+              image:
+                type: string
+                format: binary
+    CreatePost:
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+                example: "ini title"
+              description:
+                type: string
+                example: "ini description"
+              image:
+                type: string
+                format: binary
+    UpdatePostUser:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+                example: "ini title"
+              description:
+                type: string
+                example: "ini description"
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
