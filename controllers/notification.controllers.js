@@ -34,7 +34,6 @@ module.exports = {
 
   createNotification: async (req, res, next) => {
     try {
-      console.log("run");
       let { userId, message } = req.body;
 
       const newNotification = await prisma.notification.create({
@@ -44,14 +43,14 @@ module.exports = {
         },
       });
 
+      // Send the response to the client
       res.status(201).json({
         status: true,
         message: "OK",
         data: newNotification,
       });
 
-      // kirimkan notifikasi baru
-      io.emit(`user-${userId}`, newNotification);
+      req.io.emit(`user-${userId}`, newNotification);
     } catch (err) {
       next(err);
     }
