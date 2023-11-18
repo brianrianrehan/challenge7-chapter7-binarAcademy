@@ -62,6 +62,32 @@ module.exports = {
     }
   },
 
+  getNotificationsUser: async (req, res, next) => {
+    try {
+      const token = req.cookies.token;
+
+      if (!token) {
+        return res.redirect("/login");
+      }
+
+      await axios.get("http://localhost:3000/api/v1/notifications/markIsRead", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const response = await axios.get("http://localhost:3000/api/v1/notifications", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      res.render("notification", { notification: response.data.data });
+    } catch (err) {
+      next(err);
+    }
+  },
+
   logout: (req, res, next) => {
     try {
       res.clearCookie("token");

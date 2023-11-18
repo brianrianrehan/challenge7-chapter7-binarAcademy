@@ -32,12 +32,19 @@ module.exports = {
         },
       });
 
-      let newUserProfile = await prisma.userProfile.create({
+      await prisma.userProfile.create({
         data: {
           first_name,
           last_name,
           birth_date: "",
           profile_picture: "",
+          userId: newUser.id,
+        },
+      });
+
+      await prisma.notification.create({
+        data: {
+          message: `Welcome ${first_name}, thank you for creating a new account`,
           userId: newUser.id,
         },
       });
@@ -79,7 +86,7 @@ module.exports = {
     }
   },
 
-  // verify email
+  // activation email
   activate: async (req, res, next) => {
     try {
       let { token } = req.query;
@@ -106,6 +113,7 @@ module.exports = {
     }
   },
 
+  // forget password
   forgetPasswordUser: async (req, res, next) => {
     try {
       let { email } = req.body;
@@ -132,6 +140,7 @@ module.exports = {
     }
   },
 
+  // update password
   updatePasswordUser: async (req, res, next) => {
     try {
       let { token } = req.query;
@@ -153,9 +162,16 @@ module.exports = {
           });
         }
 
-        let updated = await prisma.user.update({
+        let updateUser = await prisma.user.update({
           where: { email: decoded.email },
           data: { password: encryptedPassword },
+        });
+
+        await prisma.notification.create({
+          data: {
+            message: "Your password has been updated successfully. Well done!",
+            userId: updateUser.id,
+          },
         });
 
         res.redirect("/login");

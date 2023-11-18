@@ -26,6 +26,8 @@
     "nodemailer": "^6.9.7",
     "nodemon": "^3.0.1",
     "prisma": "^5.5.2",
+    "socket.io": "^4.7.2",
+    "socket.io-client": "^4.7.2",
     "swagger-ui-express": "^5.0.0",
     "yaml": "^2.3.3"
   }
