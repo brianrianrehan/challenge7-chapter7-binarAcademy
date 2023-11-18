@@ -17,19 +17,11 @@ module.exports = {
       });
 
       if (existingUser) {
-        return res.status(400).json({
-          status: false,
-          message: "Email already exists",
-          data: null,
-        });
+        res.redirect("/register");
       }
 
       if (password != password_confirmation) {
-        return res.status(400).json({
-          status: false,
-          message: "please ensure that the password and password confirmation match!",
-          data: null,
-        });
+        res.redirect("/register");
       }
 
       let encryptedPassword = await bcrypt.hash(password, 10);
@@ -54,20 +46,41 @@ module.exports = {
       const html = await nodemailer.getHtml("activation-email.ejs", { email, token });
       nodemailer.sendEmail(email, "Email Activation", html);
 
-      // res.redirect("/login");
+      res.redirect("/login");
+    } catch (err) {
+      next(err);
+    }
+  },
 
-      res.status(201).json({
-        status: true,
-        message: "User registration has been successful",
-        data: { newUser, newUserProfile: { first_name, last_name } },
+  // Login User
+  login: async (req, res, next) => {
+    try {
+      let { email, password } = req.body;
+
+      const user = await prisma.user.findUnique({
+        where: { email },
       });
+
+      if (!user) {
+        res.redirect("/login");
+      }
+
+      let isPasswordCorrect = await bcrypt.compare(password, user.password);
+      if (!isPasswordCorrect) {
+        res.redirect("/login");
+      }
+
+      let token = jwt.sign({ id: user.id }, JWT_SECRET_KEY);
+
+      res.cookie("token", token);
+      res.redirect("/");
     } catch (err) {
       next(err);
     }
   },
 
   // verify email
-  activate: (req, res, next) => {
+  activate: async (req, res, next) => {
     try {
       let { token } = req.query;
 
@@ -93,45 +106,7 @@ module.exports = {
     }
   },
 
-  // Login User
-  login: async (req, res, next) => {
-    try {
-      let { email, password } = req.body;
-
-      const user = await prisma.user.findUnique({
-        where: { email },
-      });
-
-      if (!user) {
-        return res.status(400).json({
-          status: false,
-          message: "invalid email or password!",
-          data: null,
-        });
-      }
-
-      let isPasswordCorrect = await bcrypt.compare(password, user.password);
-      if (!isPasswordCorrect) {
-        return res.status(400).json({
-          status: false,
-          message: "invalid email or password!",
-          data: null,
-        });
-      }
-
-      let token = jwt.sign({ id: user.id }, JWT_SECRET_KEY);
-
-      return res.status(200).json({
-        status: true,
-        message: "OK",
-        data: { user, token },
-      });
-    } catch (err) {
-      next(err);
-    }
-  },
-
-  forgotPasswordUser: async (req, res, next) => {
+  forgetPasswordUser: async (req, res, next) => {
     try {
       let { email } = req.body;
 
@@ -151,13 +126,7 @@ module.exports = {
       const html = await nodemailer.getHtml("email-password-reset.ejs", { email, token });
       nodemailer.sendEmail(email, "Reset Password", html);
 
-      res.redirect("http://localhost:3000/forgot-password");
-
-      // res.status(200).json({
-      //   status: true,
-      //   message: "success",
-      //   data: { user, token },
-      // });
+      res.redirect("http://localhost:3000/forget-password");
     } catch (err) {
       next(err);
     }
@@ -169,11 +138,7 @@ module.exports = {
       let { password, password_confirmation } = req.body;
 
       if (password != password_confirmation) {
-        return res.status(400).json({
-          status: false,
-          message: "please ensure that the password and password confirmation match!",
-          data: null,
-        });
+        res.redirect(`/update-password?token=${token}`);
       }
 
       let encryptedPassword = await bcrypt.hash(password, 10);

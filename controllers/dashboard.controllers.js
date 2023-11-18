@@ -1,3 +1,5 @@
+const { default: axios } = require("axios");
+
 module.exports = {
   register: (req, res, next) => {
     try {
@@ -23,9 +25,9 @@ module.exports = {
     }
   },
 
-  forgotPassword: (req, res, next) => {
+  forgetPassword: (req, res, next) => {
     try {
-      res.render("forgot-password");
+      res.render("forget-password");
     } catch (err) {
       next(err);
     }
@@ -35,6 +37,35 @@ module.exports = {
     try {
       const { token } = req.query;
       res.render("update-password", { token });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  dashboard: async (req, res, next) => {
+    try {
+      const token = req.cookies.token;
+
+      if (!token) {
+        return res.redirect("/login");
+      }
+
+      const response = await axios.get("http://localhost:3000/api/v1/users/authenticate", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      res.render("dashboard-user", { user: response.data.data });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  logout: (req, res, next) => {
+    try {
+      res.clearCookie("token");
+      res.redirect("/login");
     } catch (err) {
       next(err);
     }
