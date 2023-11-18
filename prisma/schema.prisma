@@ -30,10 +30,10 @@ model UserProfile {
 }
 
 model Notification {
-  id       Int     @id @default(autoincrement())
-  message  String
-  is_read  Boolean
-  createAt String
-  userId   Int
-  user     User    @relation(fields: [userId], references: [id])
+  id        Int      @id @default(autoincrement())
+  message   String
+  is_read   Boolean  @default(false)
+  createdAt DateTime @default(now())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
 }

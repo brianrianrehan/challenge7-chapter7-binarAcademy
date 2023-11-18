@@ -24,8 +24,8 @@ CREATE TABLE "UserProfile" (
 CREATE TABLE "Notification" (
     "id" SERIAL NOT NULL,
     "message" TEXT NOT NULL,
-    "is_read" BOOLEAN NOT NULL,
-    "createAt" TEXT NOT NULL,
+    "is_read" BOOLEAN NOT NULL DEFAULT false,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "userId" INTEGER NOT NULL,
 
     CONSTRAINT "Notification_pkey" PRIMARY KEY ("id")
