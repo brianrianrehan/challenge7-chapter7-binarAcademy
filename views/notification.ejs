@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard</title>
+    <title>Notification</title>
   </head>
   <body style="background-color: #4299e1">
     <div style="display: flex; align-items: center; justify-content: center; height: 100vh">
@@ -20,8 +20,8 @@
           padding: 1.5rem 0 2.5rem 0;
         "
       >
-        <h1 style="font-weight: 700; font-size: 1.5rem; text-align: center; margin-bottom: 1rem">Notification</h1>
-        <div style="display: flex; flex-direction: column; width: 100%; height: 80%; margin: 0 auto 10px auto; overflow: auto">
+        <h1 id="notification" style="font-weight: 700; font-size: 1.5rem; text-align: center; margin-bottom: 1rem" userId="<%= notification[0].userId %>">Notification</h1>
+        <div id="notificationList" style="display: flex; flex-direction: column; width: 100%; height: 80%; margin: 0 auto 10px auto; overflow: auto">
           <% notification.forEach((item) => { %>
           <div style="background-color: lightsteelblue; border-radius: 5px; font-weight: 700; padding: 0.5rem 10px; margin: 5px auto 0 auto; width: 80%">
             <p style="margin: 0 0 10px 0"><%= item.message %></p>
@@ -32,5 +32,22 @@
         <a href="/" style="background-color: darkcyan; color: #fff; border-radius: 10px; font-weight: 700; padding: 0.25rem 0; text-decoration: none; text-align: center; width: 80%; margin: 0 auto">Back</a>
       </div>
     </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      let socket = io();
+      let notificationElement = document.getElementById("notification");
+      let userIdValue = notificationElement.getAttribute("userId");
+      let notifTopic = `user-${userIdValue}`;
+      let notificationList = document.getElementById("notificationList");
+
+      socket.on(userIdValue, (notif) => {
+        let divElement = document.createElement("div");
+        divElement.className = "custom-container";
+        divElement.innerHTML = `<p style="margin: 0 0 10px 0">${notif.message}</p>`;
+        divElement.innerHTML += `<p style="margin: 0; color: ghostwhite">${new Date(notif.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}</p>`;
+        notificationList.appendChild(divElement);
+      });
+    </script>
   </body>
 </html>
