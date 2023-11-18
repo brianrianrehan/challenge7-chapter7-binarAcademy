@@ -39,6 +39,7 @@ io.on("connection", (client) => {
 });
 
 app.use(Sentry.Handlers.errorHandler());
+
 // 404 error handling
 app.use((req, res, next) => {
   res.status(404).json({
