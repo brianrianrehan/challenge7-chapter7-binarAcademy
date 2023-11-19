@@ -7,6 +7,20 @@
   </head>
 
   <body style="background-color: #4299e1">
+    <% if (msg1.length !== 0) { %>
+    <div style="position: fixed; top: 3%; left: 50%; transform: translateX(-50%); border-radius: 5px; background-color: #e3342f; color: #fff; padding: 0 1.5rem">
+      <p><%= msg1 %></p>
+    </div>
+    <% }else if (msg2.length !== 0) { %>
+    <div style="position: fixed; top: 3%; left: 50%; transform: translateX(-50%); border-radius: 5px; background-color: #e3342f; color: #fff; padding: 0 1.5rem">
+      <p><%= msg2 %></p>
+    </div>
+    <% }else if (msg3.length !== 0) { %>
+    <div style="position: fixed; top: 3%; left: 50%; transform: translateX(-50%); border-radius: 5px; background-color: rgb(64, 241, 0); color: #fff; padding: 0 1.5rem">
+      <p><%= msg3 %></p>
+    </div>
+    <% } %>
+
     <div style="display: flex; align-items: center; justify-content: center; height: 100vh">
       <div
         style="
@@ -29,25 +43,25 @@
             <label style="padding: 8px">
               <img src="/img/user-icon.svg" style="filter: invert(99%) sepia(100%) saturate(0%) hue-rotate(54deg) brightness(106%) contrast(101%); width: 20px" />
             </label>
-            <input type="text" name="first_name" id="first_name" style="background-color: #4a5568; outline: none; color: white; border: none; width: 120%; border-radius: 0 4px 4px 0; padding-left: 10px" placeholder="First Name" />
+            <input type="text" name="first_name" id="first_name" style="background-color: #4a5568; outline: none; color: white; border: none; width: 120%; border-radius: 0 4px 4px 0; padding-left: 10px" placeholder="First Name" required />
           </div>
           <div style="background-color: #2d3748; display: flex; border-radius: 4px; margin-bottom: 10px">
             <label style="padding: 8px">
               <img src="/img/user-icon.svg" style="filter: invert(99%) sepia(100%) saturate(0%) hue-rotate(54deg) brightness(106%) contrast(101%); width: 20px" />
             </label>
-            <input type="text" name="last_name" id="last_name" style="background-color: #4a5568; outline: none; color: white; border: none; width: 120%; border-radius: 0 4px 4px 0; padding-left: 10px" placeholder="Last Name" />
+            <input type="text" name="last_name" id="last_name" style="background-color: #4a5568; outline: none; color: white; border: none; width: 120%; border-radius: 0 4px 4px 0; padding-left: 10px" placeholder="Last Name" required />
           </div>
           <div style="background-color: #2d3748; display: flex; border-radius: 4px; margin-bottom: 10px">
             <label style="padding: 8px">
               <img src="/img/email-icon.svg" style="filter: invert(99%) sepia(100%) saturate(0%) hue-rotate(54deg) brightness(106%) contrast(101%); width: 20px" />
             </label>
-            <input type="email" name="email" id="email" style="background-color: #4a5568; outline: none; color: white; border: none; width: 120%; border-radius: 0 4px 4px 0; padding-left: 10px" placeholder="Email" />
+            <input type="email" name="email" id="email" style="background-color: #4a5568; outline: none; color: white; border: none; width: 120%; border-radius: 0 4px 4px 0; padding-left: 10px" placeholder="Email" required />
           </div>
           <div style="background-color: #2d3748; display: flex; border-radius: 4px; margin-bottom: 10px">
             <label style="padding: 8px">
               <img src="/img/lock-icon.svg" style="filter: invert(99%) sepia(100%) saturate(0%) hue-rotate(54deg) brightness(106%) contrast(101%); width: 20px" />
             </label>
-            <input type="password" name="password" id="password" style="background-color: #4a5568; outline: none; color: white; border: none; width: 120%; border-radius: 0 4px 4px 0; padding-left: 10px" placeholder="Password" />
+            <input type="password" name="password" id="password" style="background-color: #4a5568; outline: none; color: white; border: none; width: 120%; border-radius: 0 4px 4px 0; padding-left: 10px" placeholder="Password" required />
           </div>
           <div style="background-color: #2d3748; display: flex; border-radius: 4px; margin-bottom: 10px">
             <label style="padding: 8px">
