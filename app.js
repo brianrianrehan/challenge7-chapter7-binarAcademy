@@ -6,8 +6,10 @@ const io = require("socket.io")(server);
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 const path = require("path");
+const flash = require("connect-flash");
+const session = require("express-session");
 const Sentry = require("@sentry/node");
-const { PORT = 3000, SENTRY_DSN } = process.env;
+const { PORT = 3000, SENTRY_DSN, SESSION_SECRET_KEY } = process.env;
 
 const router = require("./routes");
 
@@ -17,6 +19,14 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.set("view engine", "ejs");
 app.use(express.static(path.join(__dirname, "public")));
+app.use(
+  session({
+    secret: SESSION_SECRET_KEY,
+    resave: true,
+    saveUninitialized: true,
+  })
+);
+app.use(flash());
 
 Sentry.init({
   dsn: SENTRY_DSN,

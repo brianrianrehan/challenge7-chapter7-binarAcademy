@@ -17,10 +17,12 @@ module.exports = {
       });
 
       if (existingUser) {
+        req.flash("msg1", "Email already exists");
         res.redirect("/register");
       }
 
       if (password != password_confirmation) {
+        req.flash("msg2", "please ensure that the password and password confirmation match!");
         res.redirect("/register");
       }
 
@@ -53,6 +55,7 @@ module.exports = {
       const html = await nodemailer.getHtml("activation-email.ejs", { email, token });
       nodemailer.sendEmail(email, "Email Activation", html);
 
+      req.flash("msg3", "Register Successfully");
       res.redirect("/login");
     } catch (err) {
       next(err);
@@ -69,16 +72,19 @@ module.exports = {
       });
 
       if (!user) {
+        req.flash("msg1", "Invalid Email or Password!");
         res.redirect("/login");
       }
 
       let isPasswordCorrect = await bcrypt.compare(password, user.password);
       if (!isPasswordCorrect) {
+        req.flash("msg2", "please ensure that the password and password confirmation match!");
         res.redirect("/login");
       }
 
       let token = jwt.sign({ id: user.id }, JWT_SECRET_KEY);
 
+      req.flash("msg3", "Login Successfully!");
       res.cookie("token", token);
       res.redirect("/");
     } catch (err) {
@@ -123,18 +129,16 @@ module.exports = {
       });
 
       if (!user) {
-        return res.status(404).json({
-          status: false,
-          message: "Email not found",
-          data: null,
-        });
+        req.flash("msg1", "Email not found");
+        res.redirect("/forget-password");
       }
 
       let token = jwt.sign({ email: user.email }, JWT_SECRET_KEY);
       const html = await nodemailer.getHtml("email-password-reset.ejs", { email, token });
       nodemailer.sendEmail(email, "Reset Password", html);
 
-      res.redirect("http://localhost:3000/forget-password");
+      req.flash("msg2", "Email sent successfully.");
+      res.redirect("/forget-password");
     } catch (err) {
       next(err);
     }
@@ -147,6 +151,7 @@ module.exports = {
       let { password, password_confirmation } = req.body;
 
       if (password != password_confirmation) {
+        req.flash("msg1", "please ensure that the password and password confirmation match!");
         res.redirect(`/update-password?token=${token}`);
       }
 
@@ -174,6 +179,7 @@ module.exports = {
           },
         });
 
+        req.flash("msg2", "Your password has been updated successfully!");
         res.redirect("/login");
       });
     } catch (err) {

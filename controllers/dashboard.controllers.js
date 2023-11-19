@@ -3,7 +3,7 @@ const { default: axios } = require("axios");
 module.exports = {
   register: (req, res, next) => {
     try {
-      res.render("register");
+      res.render("register", { msg1: req.flash("msg1"), msg2: req.flash("msg2"), msg3: req.flash("msg3") });
     } catch (err) {
       next(err);
     }
@@ -11,7 +11,7 @@ module.exports = {
 
   login: (req, res, next) => {
     try {
-      res.render("login");
+      res.render("login", { msg1: req.flash("msg1"), msg2: req.flash("msg2"), msg3: req.flash("msg3") });
     } catch (err) {
       next(err);
     }
@@ -27,7 +27,7 @@ module.exports = {
 
   forgetPassword: (req, res, next) => {
     try {
-      res.render("forget-password");
+      res.render("forget-password", { msg1: req.flash("msg1"), msg2: req.flash("msg2") });
     } catch (err) {
       next(err);
     }
@@ -36,7 +36,7 @@ module.exports = {
   updatePassword: (req, res, next) => {
     try {
       const { token } = req.query;
-      res.render("update-password", { token });
+      res.render("update-password", { token, msg1: req.flash("msg1"), msg2: req.flash("msg2") });
     } catch (err) {
       next(err);
     }
