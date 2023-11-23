@@ -3,7 +3,9 @@ const prisma = new PrismaClient();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const path = require("path");
+
 const nodemailer = require("../utils/nodemailer");
+const imagekit = require("../libs/imagekit");
 const { JWT_SECRET_KEY } = process.env;
 
 module.exports = {
@@ -148,9 +150,9 @@ module.exports = {
   updatePasswordUser: async (req, res, next) => {
     try {
       let { token } = req.query;
-      let { password, password_confirmation } = req.body;
+      let { password, passwordConfirmation } = req.body;
 
-      if (password != password_confirmation) {
+      if (password != passwordConfirmation) {
         req.flash("msg1", "please ensure that the password and password confirmation match!");
         res.redirect(`/update-password?token=${token}`);
       }
