@@ -37,6 +37,19 @@ Sentry.init({
 app.use(Sentry.Handlers.requestHandler());
 app.use(Sentry.Handlers.tracingHandler());
 
+io.on("connection", (socket) => {
+  console.log("A user connected");
+
+  socket.on('join', ({ userId }) => {
+    console.log(`User ${userId} joined`);
+    socket.join(`user-${userId}`);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('User disconnected');
+  });
+});
+
 app.use((req, res, next) => {
   req.io = io;
   next();
@@ -44,9 +57,7 @@ app.use((req, res, next) => {
 
 app.use(router);
 
-io.on("connection", (client) => {
-  console.log("connected!");
-});
+
 
 app.use(Sentry.Handlers.errorHandler());
 

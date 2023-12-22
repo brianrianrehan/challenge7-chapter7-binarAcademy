@@ -4,7 +4,19 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Notification</title>
+    
+    <style>
+      .notification-container {
+        background-color: lightsteelblue;
+        border-radius: 5px;
+        font-weight: 700;
+        padding: 0.5rem 10px;
+        margin: 5px auto 0 auto;
+        width: 80%;
+      }
+    </style>
   </head>
+
   <body style="background-color: #4299e1">
     <div style="display: flex; align-items: center; justify-content: center; height: 100vh">
       <div
@@ -35,19 +47,28 @@
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
-      let socket = io();
-      let notificationElement = document.getElementById("notification");
-      let userIdValue = notificationElement.getAttribute("userId");
-      let notifTopic = `user-${userIdValue}`;
-      let notificationList = document.getElementById("notificationList");
-
-      socket.on(userIdValue, (notif) => {
-        let divElement = document.createElement("div");
-        divElement.className = "custom-container";
-        divElement.innerHTML = `<p style="margin: 0 0 10px 0">${notif.message}</p>`;
-        divElement.innerHTML += `<p style="margin: 0; color: ghostwhite">${new Date(notif.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}</p>`;
-        notificationList.appendChild(divElement);
-      });
+      
+        const socket = io();
+  
+        socket.on('connect', () => {
+          console.log('Connected to Socket.IO');
+          socket.emit('join', { userId: document.getElementById("notification").getAttribute("userId") });
+        });
+  
+        socket.on('disconnect', () => {
+          console.log('Disconnected from Socket.IO');
+          // Handle disconnection if needed
+        });
+  
+        let notificationList = document.getElementById("notificationList");
+  
+        socket.on('notification', (notif) => {
+          let divElement = document.createElement("div");
+          divElement.className = "notification-container";
+          divElement.innerHTML = `<p style="margin: 0 0 10px 0">${notif.message}</p>`;
+          divElement.innerHTML += `<p style="margin: 0; color: ghostwhite">${new Date(notif.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}</p>`;
+          notificationList.appendChild(divElement);
+        });
     </script>
   </body>
 </html>

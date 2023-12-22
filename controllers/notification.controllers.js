@@ -50,7 +50,7 @@ module.exports = {
         data: newNotification,
       });
 
-      req.io.emit(`user-${userId}`, newNotification);
+      req.io.to(`user-${userId}`).emit('notification', newNotification);
     } catch (err) {
       next(err);
     }
